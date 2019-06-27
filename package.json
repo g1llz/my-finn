@@ -1,0 +1,27 @@
+{
+  "name": "my-finn",
+  "version": "1.0.0",
+  "description": "financial manager. repo to improve my knowledge in node and tests",
+  "main": "index.js",
+  "scripts": {
+    "lint": "eslint src/** test/** --fix",
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/g1llz/my-finn.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/g1llz/my-finn/issues"
+  },
+  "homepage": "https://github.com/g1llz/my-finn#readme",
+  "devDependencies": {
+    "eslint": "^5.16.0",
+    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-plugin-import": "^2.18.0",
+    "jest": "24.8.0"
+  }
+}

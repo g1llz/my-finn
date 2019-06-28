@@ -4,8 +4,10 @@
   "description": "financial manager. repo to improve my knowledge in node and tests",
   "main": "index.js",
   "scripts": {
+    "dev": "nodemon src/index.js",
     "lint": "eslint src/** test/** --fix",
-    "test": "jest"
+    "test": "jest",
+    "secure-mode": "jest --watch"
   },
   "repository": {
     "type": "git",
@@ -22,6 +24,10 @@
     "eslint": "^5.16.0",
     "eslint-config-airbnb-base": "^13.1.0",
     "eslint-plugin-import": "^2.18.0",
-    "jest": "24.8.0"
+    "jest": "24.8.0",
+    "supertest": "4.0.2"
+  },
+  "dependencies": {
+    "express": "^4.17.1"
   }
 }

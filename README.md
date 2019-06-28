@@ -1,2 +1,3 @@
-# my-finn
-financial manager. repo to improve my knowledge in node and tests
+### my-finn
+> Financial manager. Repo to improve my knowledge in node and tests;
+**TDD** like :smile:

@@ -1,14 +1,14 @@
 const request = require('supertest');
 const server = require('../src/server');
 
-test('Should be list all users', () => request(server).get('/users')
+test('Should list all users', () => request(server).get('/users')
   .then((res) => {
     expect(res.status).toBe(200);
     expect(res.body).toHaveLength(1);
     expect(res.body[0]).toHaveProperty('name', 'Bruce Wayne');
   }));
 
-test('Should be insert an user', () => request(server).post('/users')
+test('Should insert a user', () => request(server).post('/users')
   .send({ name: 'Walter Mitty', email: 'walter@mitty.com' })
   .then((res) => {
     expect(res.status).toBe(201);

@@ -1,14 +1,18 @@
-module.exports = {
-  list: (req, res) => {
-    const users = [
-      {
-        name: 'Bruce Wayne',
-        email: 'batman@gothan.com',
-      },
-    ];
-    res.status(200).json(users);
+module.exports = db => ({
+  list: async (req, res) => {
+    try {
+      const result = await db('users').select();
+      res.status(200).json(result);
+    } catch (error) {
+      console.log(error);
+    }
   },
-  create: (req, res) => {
-    res.status(201).json(req.body);
+  create: async (req, res) => {
+    try {
+      const result = await db('users').insert(req.body, '*');
+      res.status(201).json(result[0]);
+    } catch (error) {
+      console.log(error);
+    }
   },
-};
+});

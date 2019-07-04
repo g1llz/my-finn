@@ -8,11 +8,22 @@ module.exports = db => ({
     }
   },
   create: async (req, res) => {
+    if (Object.values(req.body).some(k => k === '')) {
+      res.status(400);
+      res.json({ error: { code: 'NA', message: 'all attributes are required' } });
+      return;
+    }
     try {
       const result = await db('users').insert(req.body, '*');
       res.status(201).json(result[0]);
     } catch (error) {
-      console.log(error);
+      if (error.code === '23502') {
+        res.status(400);
+        res.json({ error: { code: error.code, message: `${error.column} not-null` } });
+        return;
+      }
+      res.status(400);
+      res.json({ error: { code: error.code, detail: error.detail } });
     }
   },
 });

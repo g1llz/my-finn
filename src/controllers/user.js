@@ -18,7 +18,7 @@ module.exports = db => ({
       }
     }
     try {
-      const result = await db('users').insert(req.body, '*');
+      const result = await db('users').insert(data, '*');
       res.status(201).json(result[0]);
     } catch (error) {
       if (error.code === '23502') {

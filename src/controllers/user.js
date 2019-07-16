@@ -8,10 +8,14 @@ module.exports = db => ({
     }
   },
   create: async (req, res) => {
-    if (Object.values(req.body).some(k => k === '')) {
-      res.status(400);
-      res.json({ error: { code: 'NA', message: 'all attributes are required' } });
-      return;
+    const data = req.body;
+    // FIXME: is there a better way to validade this?
+    for (const prop in data) {
+      if (Object.prototype.hasOwnProperty.call(data, prop) && data[prop] === '') {
+        res.status(400);
+        res.json({ error: { code: 400, message: `${prop} can not be empty` } });
+        return;
+      }
     }
     try {
       const result = await db('users').insert(req.body, '*');

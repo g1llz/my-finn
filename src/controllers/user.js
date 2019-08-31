@@ -1,3 +1,5 @@
+const _ = require('lodash');
+
 module.exports = db => ({
   list: async (req, res) => {
     try {
@@ -9,11 +11,18 @@ module.exports = db => ({
   },
   create: async (req, res) => {
     const data = req.body;
-    // FIXME: is there a better way to validade this?
-    for (const prop in data) {
-      if (Object.prototype.hasOwnProperty.call(data, prop) && data[prop] === '') {
-        res.status(400);
-        res.json({ error: { code: 400, message: `${prop} can not be empty` } });
+    const isRequired = ['name', 'email', 'password'];
+
+    for (const prop of isRequired) {
+      if (Object.prototype.hasOwnProperty.call(data, prop)) {
+        if (_.isEmpty(data[prop])) {
+          res.status(400)
+            .json({ error: { code: 400, message: `${prop} can not be empty or null` } });
+          return;
+        }
+      } else {
+        res.status(400)
+          .json({ error: { code: 400, message: `${prop} not exists in object` } });
         return;
       }
     }
@@ -21,13 +30,8 @@ module.exports = db => ({
       const result = await db('users').insert(data, '*');
       res.status(201).json(result[0]);
     } catch (error) {
-      if (error.code === '23502') {
-        res.status(400);
-        res.json({ error: { code: error.code, message: `${error.column} not-null` } });
-        return;
-      }
-      res.status(400);
-      res.json({ error: { code: error.code, detail: error.detail } });
+      res.status(400)
+        .json({ error: { code: error.code, detail: error.detail } });
     }
   },
 });

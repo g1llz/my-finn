@@ -1,4 +1,5 @@
 const _ = require('lodash');
+const required = require('../helpers/required');
 
 module.exports = db => ({
   list: async (req, res) => {
@@ -6,32 +7,78 @@ module.exports = db => ({
       const result = await db('users').select();
       res.status(200).json(result);
     } catch (error) {
-      console.log(error);
+      res.status(400)
+        .json({
+          error: true,
+          code: error.code,
+          message: error.detail,
+        });
     }
   },
   create: async (req, res) => {
     const data = req.body;
-    const isRequired = ['name', 'email', 'password'];
+    const keys = ['name', 'email', 'password'];
 
-    for (const prop of isRequired) {
-      if (Object.prototype.hasOwnProperty.call(data, prop)) {
-        if (_.isEmpty(data[prop])) {
-          res.status(400)
-            .json({ error: { code: 400, message: `${prop} can not be empty or null` } });
-          return;
-        }
-      } else {
-        res.status(400)
-          .json({ error: { code: 400, message: `${prop} not exists in object` } });
-        return;
-      }
-    }
     try {
-      const result = await db('users').insert(data, '*');
-      res.status(201).json(result[0]);
+      const validate = await required(keys, data);
+      if (typeof validate === 'boolean' && validate) {
+        try {
+          const result = await db('users').insert(data, '*');
+          res.status(201).json(result[0]);
+        } catch (error) {
+          res.status(400)
+            .json({
+              error: true,
+              code: error.code,
+              message: error.detail,
+            });
+        }
+      }
     } catch (error) {
       res.status(400)
-        .json({ error: { code: error.code, detail: error.detail } });
+        .json({
+          error: true,
+          code: 400,
+          message: error.message,
+        });
+    }
+  },
+  remove: async (req, res) => {
+    const { id } = req.params;
+
+    if (_.isNumber(id)) {
+      try {
+        const affectedRows = await db('users').where('id', id).del();
+        if (affectedRows > 0) {
+          res.status(200)
+            .json({
+              error: false,
+              code: 200,
+              message: 'user removed',
+            });
+        } else {
+          res.status(400)
+            .json({
+              error: true,
+              code: 400,
+              message: 'user not removed',
+            });
+        }
+      } catch (error) {
+        res.status(400)
+          .json({
+            error: true,
+            code: error.code,
+            message: error.detail,
+          });
+      }
+    } else {
+      res.status(400)
+        .json({
+          error: true,
+          code: 400,
+          message: 'id must be an integer',
+        });
     }
   },
 });

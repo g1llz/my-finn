@@ -1,4 +1,3 @@
-const _ = require('lodash');
 const required = require('../helpers/required');
 
 module.exports = db => ({
@@ -12,6 +11,40 @@ module.exports = db => ({
           error: true,
           code: error.code,
           message: error.detail,
+        });
+    }
+  },
+  listById: async (req, res) => {
+    const { id } = req.params;
+    const noMatch = !id.match(/[^0-9]/g);
+
+    if (noMatch) {
+      try {
+        const service = await db('services').where('id', Number(id));
+        if (service.length) {
+          res.status(200).json(service);
+        } else {
+          res.status(400)
+            .json({
+              error: true,
+              code: 400,
+              message: 'service not found',
+            });
+        }
+      } catch (error) {
+        res.status(400)
+          .json({
+            error: true,
+            code: error.code,
+            message: error.detail,
+          });
+      }
+    } else {
+      res.status(400)
+        .json({
+          error: true,
+          code: 400,
+          message: 'id must be an integer',
         });
     }
   },
@@ -45,10 +78,11 @@ module.exports = db => ({
   },
   remove: async (req, res) => {
     const { id } = req.params;
+    const noMatch = !id.match(/[^0-9]/g);
 
-    if (_.isNumber(id)) {
+    if (noMatch) {
       try {
-        const affectedRows = await db('services').where('id', id).del();
+        const affectedRows = await db('services').where('id', Number(id)).del();
         if (affectedRows > 0) {
           res.status(200)
             .json({

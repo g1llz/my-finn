@@ -4,9 +4,9 @@
   "description": "financial manager. repo to improve my knowledge in node and tests",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon src/index.js",
+    "dev": "DB_ENV=dev nodemon src/index.js",
     "lint": "eslint src/** test/** --fix",
-    "test": "jest",
+    "test": "DB_ENV=test jest",
     "secure-mode": "jest --watch"
   },
   "repository": {

@@ -5,6 +5,8 @@ volumes:
 services:
   db:
     image: postgres:9.6
+    environment:
+      - TZ=GMT
     volumes:
       # Volume dos dados
       - dados:/var/lib/postgresql/data

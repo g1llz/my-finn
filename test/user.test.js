@@ -10,8 +10,6 @@ const email = () => `${Date.now()}@mail.com`;
 
 beforeAll(() => truncate('users'));
 
-// afterAll(() => truncate('users'));
-
 describe('List user', () => {
   it('Should return status code 200 and []', () => request(server).get(MAIN_ROUTE)
     .then((res) => {
@@ -77,6 +75,27 @@ describe('Create user', () => {
     }));
 });
 
+describe('List user by ID', () => {
+  it('Should list user if ID is correctly', async () => {
+    const data = await db('users').insert({ name: 'Walter Mitty', email: email(), password: '123457' }, '*');
+    const user = { ...data[0] };
+    request(server).get(`${MAIN_ROUTE}/${user.id}`)
+      .then((res) => {
+        expect(res.status).toBe(200);
+        expect(res.body).toHaveLength(1);
+      });
+  });
+
+  it('Should failed if user not found', () => {
+    request(server).get(`${MAIN_ROUTE}/1`)
+      .then((res) => {
+        expect(res.status).toBe(400);
+        expect(res.body.error).toBe(true);
+        expect(res.body.message).toBe('user not found');
+      });
+  });
+});
+
 describe('Remove user', () => {
   it('Should remove user', async () => {
     const data = await db('users').insert({ name: 'Walter Mitty', email: email(), password: '123457' }, '*');
@@ -89,7 +108,16 @@ describe('Remove user', () => {
       });
   });
 
-  it('Should failed if id not an integer', async () => {
+  it.skip('Should failed if user not exists', () => {
+    request(server).delete(`${MAIN_ROUTE}/1`)
+      .then((res) => {
+        expect(res.error).toBe(true);
+        expect(res.status).toBe(400);
+        expect(res.message).toBe('user not removed');
+      });
+  });
+
+  it('Should failed if id not an integer', () => {
     request(server).delete(`${MAIN_ROUTE}/xoxo`)
       .then((res) => {
         expect(res.error).toBe(true);

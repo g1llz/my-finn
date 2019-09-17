@@ -4,7 +4,8 @@ module.exports = db => ({
   list: async (req, res) => {
     try {
       const result = await db('services').select();
-      res.status(200).json(result);
+      res.status(200)
+        .json(result);
     } catch (error) {
       res.status(400)
         .json({
@@ -22,7 +23,8 @@ module.exports = db => ({
       try {
         const service = await db('services').where('id', Number(id));
         if (service.length) {
-          res.status(200).json(service);
+          res.status(200)
+            .json(service);
         } else {
           res.status(400)
             .json({
@@ -57,7 +59,8 @@ module.exports = db => ({
       if (typeof validate === 'boolean' && validate) {
         try {
           const result = await db('services').insert(data, '*');
-          res.status(201).json(result[0]);
+          res.status(201)
+            .json(result[0]);
         } catch (error) {
           res.status(400)
             .json({

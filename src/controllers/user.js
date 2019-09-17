@@ -1,10 +1,16 @@
+const bcrypt = require('bcrypt');
+const _ = require('lodash');
+
 const required = require('../helpers/required');
 
 module.exports = db => ({
   list: async (req, res) => {
     try {
       const result = await db('users').select();
-      res.status(200).json(result);
+      const normalized = _.map(result, obj => _.omit(obj, ['password']));
+
+      res.status(200)
+        .json(normalized);
     } catch (error) {
       res.status(400)
         .json({
@@ -20,9 +26,12 @@ module.exports = db => ({
 
     if (noMatch) {
       try {
-        const user = await db('users').where('id', Number(id));
-        if (user.length) {
-          res.status(200).json(user);
+        const users = await db('users').where('id', Number(id));
+        if (users.length) {
+          const normalized = _.map(users, obj => _.omit(obj, ['password']));
+
+          res.status(200)
+            .json(normalized);
         } else {
           res.status(400)
             .json({
@@ -56,8 +65,18 @@ module.exports = db => ({
       const validate = await required(keys, data);
       if (typeof validate === 'boolean' && validate) {
         try {
-          const result = await db('users').insert(data, '*');
-          res.status(201).json(result[0]);
+          const { name, email, password } = data;
+          bcrypt.hash(password, 10, async (err, hash) => {
+            if (!err) {
+              const result = await db('users').insert({ name, email, password: hash }, '*');
+              const normalized = _.omit(result[0], ['password']);
+
+              res.status(201)
+                .json(normalized);
+            } else {
+              console.log(err);
+            }
+          });
         } catch (error) {
           res.status(400)
             .json({

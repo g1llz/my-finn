@@ -1,4 +1,4 @@
 ### my-finn
-> Financial manager. Repo to improve my knowledge in node and tests;
+> Repo to improve my knowledge in node and tests;
 
 **TDD** L1K3 :metal:
